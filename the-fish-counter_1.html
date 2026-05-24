@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Fish Counter — Fish. Family. Friends.</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ocean: #0a3d5c;
+    --deep: #051f30;
+    --tide: #1a6b8a;
+    --coral: #ff6b35;
+    --golden: #f7c948;
+    --cream: #fdf6e3;
+    --foam: #f0f9ff;
+    --sand: #e8d5a3;
+    --text: #1a1a1a;
+    --light: #ffffff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(5,31,48,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid rgba(247,201,72,0.3);
+  }
+  .nav-logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem; font-weight: 900;
+    color: var(--golden);
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .nav-logo span { font-size: 1.6rem; }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--cream); text-decoration: none;
+    font-size: 0.9rem; font-weight: 500; letter-spacing: 0.05em;
+    text-transform: uppercase; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--golden); }
+  .nav-cta {
+    background: var(--coral); color: white;
+    padding: 0.6rem 1.4rem; border-radius: 2rem;
+    text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: #e55a25; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--deep);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 70% 50%, rgba(26,107,138,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(255,107,53,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 10%, rgba(247,201,72,0.1) 0%, transparent 40%);
+  }
+  /* Wave SVG at bottom */
+  .hero-wave {
+    position: absolute; bottom: -2px; left: 0; right: 0;
+  }
+  /* Floating fish decorations */
+  .fish-deco {
+    position: absolute;
+    opacity: 0.06;
+    font-size: 12rem;
+    animation: float 8s ease-in-out infinite;
+  }
+  .fish-deco:nth-child(1) { top: 10%; right: 5%; animation-delay: 0s; }
+  .fish-deco:nth-child(2) { top: 60%; right: 20%; font-size: 6rem; animation-delay: 3s; }
+  .fish-deco:nth-child(3) { top: 30%; left: 2%; font-size: 8rem; animation-delay: 1.5s; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 4rem; max-width: 700px;
+    animation: heroIn 1s ease both;
+  }
+  @keyframes heroIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(247,201,72,0.15);
+    border: 1px solid rgba(247,201,72,0.4);
+    color: var(--golden);
+    padding: 0.4rem 1rem; border-radius: 2rem;
+    font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(3.5rem, 8vw, 6.5rem);
+    font-weight: 900; line-height: 0.95;
+    color: var(--light); margin-bottom: 1.5rem;
+    letter-spacing: -0.03em;
+  }
+  .hero h1 em {
+    font-style: italic; color: var(--golden);
+    display: block;
+  }
+  .hero p {
+    font-size: 1.15rem; color: rgba(255,255,255,0.7);
+    line-height: 1.7; max-width: 480px; margin-bottom: 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--coral); color: white;
+    padding: 0.9rem 2rem; border-radius: 3rem;
+    text-decoration: none; font-weight: 700; font-size: 1rem;
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    transition: all 0.25s; box-shadow: 0 4px 20px rgba(255,107,53,0.4);
+  }
+  .btn-primary:hover { background: #e55a25; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(255,107,53,0.5); }
+  .btn-secondary {
+    background: transparent; color: white;
+    padding: 0.9rem 2rem; border-radius: 3rem;
+    text-decoration: none; font-weight: 600; font-size: 1rem;
+    border: 1.5px solid rgba(255,255,255,0.3);
+    transition: all 0.25s;
+  }
+  .btn-secondary:hover { border-color: var(--golden); color: var(--golden); }
+
+  .hero-stats {
+    position: absolute; right: 4rem; bottom: 8rem;
+    display: flex; gap: 3rem; z-index: 2;
+    animation: heroIn 1s 0.3s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2.5rem; font-weight: 900; color: var(--golden); display: block;
+  }
+  .stat-label { font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* OCEAN WISE BADGE */
+  .ow-banner {
+    background: var(--tide);
+    padding: 1rem 4rem;
+    display: flex; align-items: center; justify-content: center; gap: 1rem;
+    color: white; font-size: 0.95rem; font-weight: 500;
+  }
+  .ow-badge {
+    background: var(--golden); color: var(--deep);
+    padding: 0.2rem 0.8rem; border-radius: 1rem;
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  /* ABOUT */
+  .about {
+    padding: 8rem 4rem;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+    align-items: center; max-width: 1200px; margin: 0 auto;
+  }
+  .about-visual {
+    position: relative; height: 500px;
+  }
+  .about-card {
+    position: absolute; border-radius: 2rem; overflow: hidden;
+  }
+  .about-card-main {
+    width: 75%; height: 75%; top: 0; left: 0;
+    background: linear-gradient(135deg, var(--ocean), var(--tide));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8rem;
+  }
+  .about-card-accent {
+    width: 55%; height: 55%; bottom: 0; right: 0;
+    background: var(--golden);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem;
+  }
+  .about-card-tag {
+    position: absolute; top: 2rem; right: 0;
+    background: var(--coral); color: white;
+    padding: 0.5rem 1.2rem; border-radius: 1rem 0 0 1rem;
+    font-weight: 700; font-size: 0.8rem; letter-spacing: 0.05em;
+  }
+  .section-label {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--coral); margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .section-label::before {
+    content: ''; display: block; width: 2rem; height: 2px; background: var(--coral);
+  }
+  .about h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 3rem; font-weight: 900; line-height: 1.1;
+    letter-spacing: -0.02em; margin-bottom: 1.5rem;
+    color: var(--deep);
+  }
+  .about p {
+    font-size: 1.05rem; line-height: 1.8; color: #555;
+    margin-bottom: 1.5rem;
+  }
+  .about-badges { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+  .badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: var(--foam); border: 1.5px solid rgba(10,61,92,0.1);
+    padding: 0.5rem 1rem; border-radius: 2rem;
+    font-size: 0.85rem; font-weight: 600; color: var(--ocean);
+  }
+
+  /* MENU */
+  .menu-section {
+    background: var(--deep);
+    padding: 8rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .menu-section::before {
+    content: '';
+    position: absolute; top: -100px; left: -100px; right: -100px; bottom: -100px;
+    background: radial-gradient(ellipse at 30% 50%, rgba(26,107,138,0.2) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .menu-header {
+    text-align: center; margin-bottom: 4rem; position: relative; z-index: 1;
+  }
+  .menu-header .section-label { justify-content: center; }
+  .menu-header .section-label::before { display: none; }
+  .menu-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 3.5rem; font-weight: 900;
+    color: var(--light); letter-spacing: -0.02em;
+  }
+  .menu-header h2 span { color: var(--golden); }
+
+  .menu-tabs {
+    display: flex; justify-content: center; gap: 1rem;
+    flex-wrap: wrap; margin-bottom: 3rem; position: relative; z-index: 1;
+  }
+  .tab-btn {
+    background: rgba(255,255,255,0.07);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    padding: 0.6rem 1.5rem; border-radius: 2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active, .tab-btn:hover {
+    background: var(--coral); border-color: var(--coral);
+    color: white;
+  }
+
+  .menu-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem; max-width: 1200px; margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .menu-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 1.5rem; padding: 1.8rem;
+    transition: all 0.3s; cursor: default;
+    backdrop-filter: blur(10px);
+  }
+  .menu-card:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(247,201,72,0.4);
+    transform: translateY(-4px);
+  }
+  .menu-card-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .menu-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem; font-weight: 700; color: var(--light);
+    flex: 1; line-height: 1.3;
+  }
+  .price {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem; font-weight: 900;
+    color: var(--golden); white-space: nowrap; margin-left: 1rem;
+  }
+  .menu-card p {
+    font-size: 0.85rem; line-height: 1.6;
+    color: rgba(255,255,255,0.5);
+  }
+  .gf-badge {
+    display: inline-block; margin-top: 0.75rem;
+    background: rgba(247,201,72,0.15); color: var(--golden);
+    border: 1px solid rgba(247,201,72,0.3);
+    padding: 0.15rem 0.6rem; border-radius: 1rem;
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;
+  }
+
+  /* LOCATIONS */
+  .locations {
+    padding: 8rem 4rem; max-width: 1200px; margin: 0 auto;
+  }
+  .locations-header { text-align: center; margin-bottom: 4rem; }
+  .locations-header h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 3rem; font-weight: 900; color: var(--deep); letter-spacing: -0.02em;
+  }
+  .locations-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+  }
+  .location-card {
+    background: white;
+    border-radius: 2rem; overflow: hidden;
+    box-shadow: 0 10px 40px rgba(10,61,92,0.1);
+    transition: transform 0.3s;
+  }
+  .location-card:hover { transform: translateY(-6px); }
+  .location-map {
+    height: 200px;
+    background: linear-gradient(135deg, var(--ocean), var(--tide));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; position: relative; overflow: hidden;
+  }
+  .location-map::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 120%, rgba(247,201,72,0.3) 0%, transparent 60%);
+  }
+  .location-body { padding: 2rem; }
+  .location-body h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem; font-weight: 700; color: var(--deep); margin-bottom: 0.5rem;
+  }
+  .location-body address {
+    font-style: normal; font-size: 0.9rem; color: #666; margin-bottom: 1rem; line-height: 1.6;
+  }
+  .hours-row {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.9rem; margin-bottom: 1.5rem;
+  }
+  .hours-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #22c55e; flex-shrink: 0;
+  }
+  .hours-text { color: #22c55e; font-weight: 600; }
+  .hours-time { color: #666; }
+  .location-actions { display: flex; gap: 1rem; }
+  .btn-loc {
+    flex: 1; text-align: center;
+    padding: 0.7rem; border-radius: 1rem;
+    font-weight: 600; font-size: 0.9rem;
+    text-decoration: none; transition: all 0.2s;
+    border: 1.5px solid;
+  }
+  .btn-loc-primary {
+    background: var(--ocean); color: white; border-color: var(--ocean);
+  }
+  .btn-loc-primary:hover { background: var(--deep); }
+  .btn-loc-secondary {
+    background: transparent; color: var(--ocean); border-color: var(--ocean);
+  }
+  .btn-loc-secondary:hover { background: var(--ocean); color: white; }
+
+  /* FOOTER */
+  footer {
+    background: var(--deep);
+    padding: 4rem;
+    border-top: 2px solid rgba(247,201,72,0.2);
+  }
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 4rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 2rem;
+  }
+  .footer-brand .logo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem; font-weight: 900;
+    color: var(--golden); margin-bottom: 1rem; display: block;
+  }
+  .footer-brand p {
+    color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.7; max-width: 280px;
+  }
+  .footer-col h4 {
+    font-weight: 700; font-size: 0.8rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 1.2rem;
+  }
+  .footer-col ul { list-style: none; }
+  .footer-col li { margin-bottom: 0.6rem; }
+  .footer-col a {
+    color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.9rem; transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--golden); }
+  .footer-bottom {
+    max-width: 1200px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(255,255,255,0.3); font-size: 0.8rem;
+  }
+
+  /* HIDDEN MENU PANELS */
+  .menu-panel { display: none; }
+  .menu-panel.active { display: contents; }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero-content { padding: 0 1.5rem; }
+    .hero-stats { right: 1.5rem; bottom: 5rem; gap: 1.5rem; }
+    .about { grid-template-columns: 1fr; padding: 4rem 1.5rem; gap: 3rem; }
+    .about-visual { height: 300px; }
+    .menu-section, .locations { padding: 4rem 1.5rem; }
+    .locations-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; padding: 0 1.5rem 2rem; }
+    footer { padding: 3rem 1.5rem; }
+    .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo"><span>🐟</span> The Fish Counter</div>
+  <ul class="nav-links">
+    <li><a href="#about">Our Story</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#locations">Locations</a></li>
+  </ul>
+  <a href="#menu" class="nav-cta">Order Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="fish-deco">🐠</div>
+  <div class="fish-deco">🦐</div>
+  <div class="fish-deco">🐡</div>
+  <div class="hero-content">
+    <div class="hero-tag">🌊 Ocean Wise Certified</div>
+    <h1>Crispy. Fresh. <em>Legendary.</em></h1>
+    <p>Vancouver's favourite fish & chip shop, serving Ocean Wise sustainable seafood since day one. Fish. Family. Friends.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn-primary">🍟 See the Menu</a>
+      <a href="#locations" class="btn-secondary">Find Us</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">2</span><span class="stat-label">Locations</span></div>
+    <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Ocean Wise</span></div>
+    <div class="stat"><span class="stat-num">Fresh</span><span class="stat-label">Daily</span></div>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 1440 80" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path d="M0 40C240 80 480 0 720 40C960 80 1200 0 1440 40V80H0V40Z" fill="#fdf6e3"/>
+  </svg>
+</section>
+
+<!-- OCEAN WISE BANNER -->
+<div class="ow-banner">
+  <span class="ow-badge">✓ Ocean Wise</span>
+  <span>Every dish we serve is sustainably sourced — protecting BC's marine ecosystems, one bite at a time.</span>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <div class="about-card about-card-main">🎣</div>
+    <div class="about-card about-card-accent">🍋</div>
+    <div class="about-card-tag">Est. Vancouver, BC</div>
+  </div>
+  <div class="about-text">
+    <div class="section-label">Our Story</div>
+    <h2>Born from a passion for the sea</h2>
+    <p>The Fish Counter was born from a deep love of sustainable seafood. We opened our doors with a simple mission: to serve fresh, delicious meals that protect our waters for future generations.</p>
+    <p>Every item on our menu is Ocean Wise certified — because great food and a healthy ocean go hand in hand. Together, we're making waves for a better tomorrow, one bite at a time.</p>
+    <div class="about-badges">
+      <div class="badge">🌊 Ocean Wise Certified</div>
+      <div class="badge">🤝 Family Owned</div>
+      <div class="badge">🌿 Gluten-Free Options</div>
+      <div class="badge">📍 2 Vancouver Locations</div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section class="menu-section" id="menu">
+  <div class="menu-header">
+    <div class="section-label">Fresh Every Day</div>
+    <h2>Our <span>Menu</span></h2>
+  </div>
+  <div class="menu-tabs">
+    <button class="tab-btn active" onclick="showTab('fish')">🐟 Fish n' Chips</button>
+    <button class="tab-btn" onclick="showTab('soups')">🥪 Soups & Sandwiches</button>
+    <button class="tab-btn" onclick="showTab('sides')">🍟 Sides</button>
+  </div>
+  <div class="menu-grid">
+
+    <!-- Fish n Chips -->
+    <div class="menu-panel active" data-tab="fish">
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Ocean Wise Cod</h4>
+          <span class="price">$16.98</span>
+        </div>
+        <p>Hand-cut fries & homemade tartar sauce. Make it a 2-piece for only $8 more!</p>
+        <span class="gf-badge">GF Available</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Ocean Wise Snapper</h4>
+          <span class="price">$15.98</span>
+        </div>
+        <p>Hand-cut fries & homemade tartar sauce. Make it a 2-piece for only $7 more!</p>
+        <span class="gf-badge">GF Available</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Ocean Wise Halibut</h4>
+          <span class="price">$22.98</span>
+        </div>
+        <p>Hand-cut fries & homemade tartar sauce. Make it a 2-piece for only $12 more!</p>
+        <span class="gf-badge">GF Available</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>'Catch of the Day' Salmon</h4>
+          <span class="price">$19.98</span>
+        </div>
+        <p>Hand-cut fries & homemade tartar sauce. Make it a 2-piece for only $9 more!</p>
+        <span class="gf-badge">GF Available</span>
+      </div>
+    </div>
+
+    <!-- Soups & Sandwiches -->
+    <div class="menu-panel" data-tab="soups">
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>New England Clam Chowder</h4>
+          <span class="price">$11.98</span>
+        </div>
+        <p>Warm, hearty, homemade soup with tender clams, sweet corn & seasoned vegetables.</p>
+        <span class="gf-badge">Dairy Free · GF</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Oyster Po'Boy</h4>
+          <span class="price">$18.98</span>
+        </div>
+        <p>Lightly battered fried oysters, kimchi, arugula & house-made tartar sauce on a toasted baguette.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Salmonito Wrap</h4>
+          <span class="price">$15.98</span>
+        </div>
+        <p>Tender salmon, napa slaw, pickled fennel & red onions with homemade chipotle mayo.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>BC Bouillabaisse</h4>
+          <span class="price">$14.98</span>
+        </div>
+        <p>Saffron-infused fennel, sweet peppers & ripe tomatoes in a rich, aromatic seafood soup base.</p>
+        <span class="gf-badge">GF</span>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Crab & Shrimp Baguette</h4>
+          <span class="price">$18.98</span>
+        </div>
+        <p>Dungeness crab & baby shrimp with saffron aioli, arugula and pickled fennel slaw on a toasted baguette.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Fish Tacos</h4>
+          <span class="price">from $7.98</span>
+        </div>
+        <p>Mango salsa, crispy cod, taco crema & pickled fennel slaw. Two tacos for $14.98. Ask about salmonito style!</p>
+      </div>
+    </div>
+
+    <!-- Sides -->
+    <div class="menu-panel" data-tab="sides">
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Caesar Salad</h4>
+          <span class="price">$14.98</span>
+        </div>
+        <p>Romaine, parmesan & homemade Caesar dressing. Add pan-seared salmon for only $10.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Side of Fries</h4>
+          <span class="price">$4.98</span>
+        </div>
+        <p>A regular portion of our signature hand-cut fries.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Jumbo Fries</h4>
+          <span class="price">$8.98</span>
+        </div>
+        <p>An extra-large portion of our hand-cut fries — go big!</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Mushy Peas</h4>
+          <span class="price">$6.98</span>
+        </div>
+        <p>Dried peas, boiled, mashed and seasoned with salt and pepper. A classic British side.</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Golden Scallop Bites</h4>
+          <span class="price">$16.98</span>
+        </div>
+        <p>Hokkaido scallops, lightly battered and fried to crispy perfection with fresh lemon. Pure seafood bliss!</p>
+      </div>
+      <div class="menu-card">
+        <div class="menu-card-top">
+          <h4>Crispy Oyster</h4>
+          <span class="price">$4.98</span>
+        </div>
+        <p>Lightly battered and fried to golden perfection, served fresh from BC waters.</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- LOCATIONS -->
+<section class="locations" id="locations">
+  <div class="locations-header">
+    <div class="section-label" style="justify-content:center"><span style="display:none"></span>Find Us</div>
+    <h2>Two Locations, One Obsession</h2>
+  </div>
+  <div class="locations-grid">
+    <div class="location-card">
+      <div class="location-map">📍</div>
+      <div class="location-body">
+        <h3>Main Street</h3>
+        <address>3825 Main Street<br>Vancouver, BC V5V 3P1</address>
+        <div class="hours-row">
+          <div class="hours-dot"></div>
+          <span class="hours-text">Open Today</span>
+          <span class="hours-time">— 11:00 a.m. – 6:30 p.m.</span>
+        </div>
+        <div class="location-actions">
+          <a href="tel:6048763474" class="btn-loc btn-loc-primary">📞 (604) 876-3474</a>
+          <a href="https://maps.google.com/?q=3825+Main+Street+Vancouver+BC" class="btn-loc btn-loc-secondary" target="_blank">Directions</a>
+        </div>
+      </div>
+    </div>
+    <div class="location-card">
+      <div class="location-map">📍</div>
+      <div class="location-body">
+        <h3>Edgemont Village</h3>
+        <address>3135 Edgemont Blvd<br>North Vancouver, BC V7R 2N7</address>
+        <div class="hours-row">
+          <div class="hours-dot"></div>
+          <span class="hours-text">Open Today</span>
+          <span class="hours-time">— 11:00 a.m. – 8:00 p.m.</span>
+        </div>
+        <div class="location-actions">
+          <a href="tel:6049878805" class="btn-loc btn-loc-primary">📞 (604) 987-8805</a>
+          <a href="https://maps.google.com/?q=3135+Edgemont+Blvd+North+Vancouver+BC" class="btn-loc btn-loc-secondary" target="_blank">Directions</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">🐟 The Fish Counter</span>
+      <p>Born from a passion for sustainable seafood. Serving Vancouver fresh, Ocean Wise certified fish & chips since we opened our doors.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Visit Us</h4>
+      <ul>
+        <li><a href="#">Main Street, Vancouver</a></li>
+        <li><a href="#">Edgemont Village, North Van</a></li>
+        <li><a href="tel:6048763474">Main St: (604) 876-3474</a></li>
+        <li><a href="tel:6049878805">Edgemont: (604) 987-8805</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <ul>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="https://the-fishcounter.com/privacy-policy">Privacy Policy</a></li>
+        <li><a href="https://the-fishcounter.com/terms-and-conditions">Terms & Conditions</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 The Fish Counter — All Rights Reserved.</span>
+    <span>Fish. Family. Friends. 🌊</span>
+  </div>
+</footer>
+
+<script>
+  function showTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.menu-panel').forEach(p => p.classList.remove('active'));
+    event.target.classList.add('active');
+    document.querySelectorAll(`[data-tab="${tab}"]`).forEach(p => p.classList.add('active'));
+  }
+</script>
+</body>
+</html>
